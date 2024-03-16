@@ -1,8 +1,8 @@
 # The Wild Oasis
 
-###Main project in The Ultimate React Course 2024 - React, Redux & More by Jonas Schmeedtmann.
+Main project in The Ultimate React Course 2024 - React, Redux & More by Jonas Schmeedtmann.
 
-#####Technologies used in the project
+Technologies used in the project
   1. React
   2. JavaScript
   3. styled-components
