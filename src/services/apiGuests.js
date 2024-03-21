@@ -2,7 +2,6 @@ import supabase from "./supabase";
 import { getCode } from "country-list";
 
 export async function createGuest(newGuest) {
-  console.log(newGuest);
   const {
     fullNameGuest: fullName,
     emailGuest: email,
@@ -18,4 +17,12 @@ export async function createGuest(newGuest) {
   if (error) throw new Error(error.message);
 
   return data;
+}
+
+export async function getGuests() {
+  const { data: guests, error } = await supabase.from("guests").select("*");
+
+  if (error) throw new Error(error.message);
+
+  return guests;
 }

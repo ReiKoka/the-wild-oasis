@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createGuest as createGuestAPI } from "../../services/apiGuests";
 import toast from "react-hot-toast";
 
-export function useGuests() {
+export function useCreateGuest() {
   const { mutate: createGuest, isLoading: isCreatingGuest } = useMutation({
     mutationFn: createGuestAPI,
     onSuccess: () => {

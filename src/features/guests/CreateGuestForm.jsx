@@ -4,12 +4,12 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import Button from "../../ui/Button";
-import { useGuests } from "./useGuests";
+import { useCreateGuest } from "./useCreateGuest";
 
 function CreateGuestForm() {
   const { register, reset, handleSubmit, formState } = useForm();
   const { errors } = formState;
-  const { createGuest, isCreatingGuest } = useGuests();
+  const { createGuest, isCreatingGuest } = useCreateGuest();
 
   function onSubmit({ fullNameGuest, emailGuest, nationalID, nationality }) {
     createGuest(
