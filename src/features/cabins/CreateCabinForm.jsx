@@ -33,6 +33,8 @@ export function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
       typeof data.image === "object" && data.image.length > 0
         ? data.image[0]
         : cabinToEdit.image;
+    
+    console.log(image)
 
     if (isEditSession) {
       console.log(isEditSession);
@@ -142,9 +144,9 @@ export function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow label="Cabin photo">
+      <FormRow label="Avatar image">
         <FileInput
-          id="image"
+          id="avatar"
           accept="image/*"
           {...register("image", {
             required: isEditSession ? false : "This field is required",

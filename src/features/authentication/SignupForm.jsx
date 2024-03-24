@@ -4,15 +4,16 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import { useSignup } from "./useSignup";
+import FileInput from "../../ui/FileInput";
 
 function SignupForm() {
   const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
   const { signup, isLoading } = useSignup();
 
-  function onSubmit({ fullName, email, password }) {
+  function onSubmit({ fullName, email, password, avatar }) {
     signup(
-      { fullName, email, password },
+      { fullName, email, password, avatar: avatar[0] },
       {
         onSettled: () => reset(),
       }
@@ -76,9 +77,18 @@ function SignupForm() {
         />
       </FormRow>
 
+      <FormRow label="Avatar">
+        <FileInput id="avatar" accept="image/*" {...register("avatar")} />
+      </FormRow>
+
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button $variation="secondary" type="reset" disabled={isLoading} onClick={reset}>
+        <Button
+          $variation="secondary"
+          type="reset"
+          disabled={isLoading}
+          onClick={reset}
+        >
           Cancel
         </Button>
         <Button disabled={isLoading}>Create new user</Button>
