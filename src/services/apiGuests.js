@@ -20,9 +20,10 @@ export async function createGuest(newGuest) {
 }
 
 export async function getGuests() {
-  const { data: guests, error } = await supabase.from("guests").select("*");
+  const { data, error } = await supabase.from("guests").select("*");
 
   if (error) throw new Error(error.message);
 
-  return guests;
+  // console.log(data)
+  return data;
 }

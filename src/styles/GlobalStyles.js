@@ -193,6 +193,27 @@ const GlobalStyles = createGlobalStyle`
   outline: none;
 }
 
+.react-datepicker__month-container {
+  width: 30rem;
+  font-family: "Poppins";
+}
+
+.react-datepicker__header {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  border: 1px solid var(--color-grey-300);
+  background-color: var(--color-grey-0);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.8rem 1.2rem;
+  outline: none;
+}
+
+
 
 `;
 
