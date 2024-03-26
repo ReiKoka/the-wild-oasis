@@ -4,6 +4,7 @@ import {
   HiOutlineChatBubbleBottomCenterText,
   HiOutlineCheckCircle,
   HiOutlineCurrencyDollar,
+  HiOutlineHome,
   HiOutlineHomeModern,
 } from "react-icons/hi2";
 
@@ -11,6 +12,7 @@ import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import { useSettings } from "../settings/useSettings";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -119,6 +121,8 @@ function BookingDataBox({ booking }) {
     cabins: { name: cabinName },
   } = booking;
 
+  const { settings } = useSettings();
+
   return (
     <StyledBookingDataBox>
       <Header>
@@ -162,8 +166,12 @@ function BookingDataBox({ booking }) {
           </DataItem>
         )}
 
+        <DataItem icon={<HiOutlineHome />} label="Cabin price">
+          {formatCurrency(cabinPrice)}/night
+        </DataItem>
+
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {hasBreakfast ? "Yes" : "No"}
+          {hasBreakfast ? `Yes (${settings.breakfastPrice}/guest)` : "No"}
         </DataItem>
 
         <Price $isPaid={isPaid}>
@@ -171,7 +179,7 @@ function BookingDataBox({ booking }) {
             {formatCurrency(totalPrice)}
 
             {hasBreakfast &&
-              ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
+              ` (${formatCurrency(cabinPrice * numNights)} cabin + ${formatCurrency(
                 extrasPrice
               )} breakfast)`}
           </DataItem>
