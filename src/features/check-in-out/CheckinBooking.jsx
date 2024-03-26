@@ -16,7 +16,7 @@ import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useSettings } from "../settings/useSettings";
 import { isToday, isTomorrow } from "date-fns";
-import toast from "react-hot-toast";
+
 
 const Box = styled.div`
   /* Box */
