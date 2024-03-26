@@ -15,6 +15,8 @@ import Checkbox from "./../../ui/Checkbox";
 import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useSettings } from "../settings/useSettings";
+import { isToday, isTomorrow } from "date-fns";
+import toast from "react-hot-toast";
 
 const Box = styled.div`
   /* Box */
@@ -46,24 +48,33 @@ function CheckinBooking() {
     numGuests,
     hasBreakfast,
     numNights,
+    startDate,
   } = booking;
+
+  const isCheckinAvailable =
+    isTomorrow(new Date(startDate)) || isToday(new Date(startDate));
+  console.log(isCheckinAvailable);
+
+  console.log(isCheckinAvailable ?  !confirmPaid || isCheckingIn : false)
 
   const optionalBreakfastPrice =
     settings.breakfastPrice * numNights * numGuests;
 
   function handleCheckin() {
     if (!confirmPaid) return;
-    
-    if (addBreakfast) {
-      checkin({bookingId, breakfast: {
-        hasBreakfast: true,
-        extrasPrice: optionalBreakfastPrice,
-        totalPrice: totalPrice + optionalBreakfastPrice,
-      }})
-    } else {
-      checkin({bookingId, breakfast: {}});
-    }
 
+    if (addBreakfast) {
+      checkin({
+        bookingId,
+        breakfast: {
+          hasBreakfast: true,
+          extrasPrice: optionalBreakfastPrice,
+          totalPrice: totalPrice + optionalBreakfastPrice,
+        },
+      });
+    } else {
+      checkin({ bookingId, breakfast: {} });
+    }
   }
 
   return (
@@ -105,7 +116,7 @@ function CheckinBooking() {
       </Box>
 
       <ButtonGroup>
-        <Button onClick={handleCheckin} disabled={!confirmPaid || isCheckingIn}>
+        <Button onClick={handleCheckin} disabled={isCheckinAvailable ?  !confirmPaid || isCheckingIn : true}>
           Check in booking #{bookingId}
         </Button>
         <Button $variation="secondary" onClick={moveBack}>
