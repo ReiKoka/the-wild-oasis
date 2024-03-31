@@ -33,7 +33,7 @@ export const Label = styled.label`
 `;
 
 export const Error = styled.span`
-  margin-left: 40px;
+  margin-left: 50px;
   font-size: 1.4rem;
   color: var(--color-red-700);
 `;

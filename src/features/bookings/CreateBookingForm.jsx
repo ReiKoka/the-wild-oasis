@@ -82,7 +82,7 @@ function CreateBookingForm({ onCloseModal }) {
     const startDateDate = new Date(start);
     const endDateDate = new Date(end);
 
-    console.log(startDateDate)
+    console.log(startDateDate);
 
     console.log(cabinId);
 
@@ -219,7 +219,10 @@ function CreateBookingForm({ onCloseModal }) {
     return <Spinner />;
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      type={onCloseModal ? "modal" : "regular"}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <FormRow label="Guest Name" error={errors?.guestId?.message}>
         <StyledSelect
           disabled={isCreatingBooking}
@@ -335,7 +338,9 @@ function CreateBookingForm({ onCloseModal }) {
           defaultValue={false}
           {...register("hasBreakfast")}
         >
-          <option value={true}>Yes ({formatCurrency(settings.breakfastPrice)}/guest)</option>
+          <option value={true}>
+            Yes ({formatCurrency(settings.breakfastPrice)}/guest)
+          </option>
           <option value={false}>No</option>
         </StyledSelect>
       </FormRow>

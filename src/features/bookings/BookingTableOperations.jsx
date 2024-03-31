@@ -4,6 +4,12 @@ import TableOperations from "../../ui/TableOperations";
 import Modal from "../../ui/Modal";
 import Button from "../../ui/Button";
 import CreateBookingForm from "./CreateBookingForm";
+import styled from "styled-components";
+
+const StyledDiv = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
 
 function BookingTableOperations() {
   return (
@@ -31,6 +37,7 @@ function BookingTableOperations() {
           ]}
         />
       </TableOperations>
+      
       <Modal>
         <Modal.Open opens="booking-form">
           <Button>Add new booking</Button>
