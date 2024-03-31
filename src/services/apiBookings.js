@@ -2,6 +2,18 @@ import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "./../utils/constants";
 
+export async function getAllBookings() {
+  const { data, error } = await supabase.from("bookings").select('startDate, endDate, cabinId');
+
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be loaded");
+  }
+
+  return data ;
+}
+
+
 export async function getBookings({ filter, sortBy, page }) {
   let query = supabase
     .from("bookings")

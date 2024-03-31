@@ -21,7 +21,7 @@ const StyledFormRow = styled.div`
     border-bottom: 1px solid var(--color-grey-100);
   }
 
-  &:has(button):not(:nth-child(-n + 3)) {
+  &:has(button):not(:nth-child(-n + 5)) {
     display: flex;
     justify-content: flex-end;
     gap: 1.2rem;
@@ -33,6 +33,7 @@ export const Label = styled.label`
 `;
 
 export const Error = styled.span`
+  margin-left: 40px;
   font-size: 1.4rem;
   color: var(--color-red-700);
 `;

@@ -1,25 +1,18 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {
-  addDays,
-  areIntervalsOverlapping,
-  differenceInDays,
-  isToday,
-} from "date-fns";
+import { differenceInDays, format, isToday } from "date-fns";
 
-import Form from "./../../ui/Form";
-import FormRow from "./../../ui/FormRow";
-import Input from "./../../ui/Input";
+import Form from "../../ui/Form";
+import FormRow from "../../ui/FormRow";
+import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import { useGuests } from "../guests/useGuests";
-import Spinner from "./../../ui/Spinner";
-import { useCabins } from "./../cabins/useCabins";
-import { useSettings } from "./../settings/useSettings";
-import { Controller, useForm } from "react-hook-form";
+import Spinner from "../../ui/Spinner";
+import { useCabins } from "../cabins/useCabins";
+import { useSettings } from "../settings/useSettings";
+import { useForm } from "react-hook-form";
 import { useCreateBooking } from "./useCreateBooking";
 import { formatCurrency } from "../../utils/helpers";
-import DatePicker from "react-multi-date-picker";
-import { useAllBookings } from "./useAllBookings";
 
 const StyledSelect = styled.select`
   border: 1px solid var(--color-grey-300);
@@ -28,7 +21,7 @@ const StyledSelect = styled.select`
   padding: 0.8rem 1.2rem;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  width: 130%;
+  width: 100%;
   box-sizing: border-box;
 `;
 
@@ -38,7 +31,7 @@ const Textarea = styled.textarea`
   border-radius: 5px;
   background-color: var(--color-grey-0);
   box-shadow: var(--shadow-sm);
-  width: 130%;
+  width: 100%;
   height: 9rem;
   box-sizing: border-box;
   resize: none;
@@ -47,11 +40,10 @@ const Textarea = styled.textarea`
 function CreateBookingForm({ onCloseModal }) {
   const { isLoadingGuests, data: guests } = useGuests();
   const { isLoading: isLoadingCabins, cabins } = useCabins();
-  const { allBookings, isLoading: isLoadingAllBookings } = useAllBookings();
   const { isLoading: isLoadingSettings, settings } = useSettings();
   const { isCreatingBooking, createBooking } = useCreateBooking();
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange === null ? ["", ""] : dateRange;
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const {
     register,
@@ -59,71 +51,21 @@ function CreateBookingForm({ onCloseModal }) {
     formState: { errors },
     setError,
     reset,
-    setValue,
-    control,
   } = useForm();
 
   function onSubmit({
     guestId,
     cabinId,
     numGuests,
-    regularPrice,
+    startDate,
+    endDate,
     isPaid,
-    bookingDates,
     hasBreakfast,
     observations,
   }) {
-    const cabinPrice = Number(regularPrice.replace(/[^0-9]/g, "").slice(0, -2));
-    console.log(cabinPrice);
-
-    const start = bookingDates[0].format();
-    const end = bookingDates[1].format();
-
-    const startDateDate = new Date(start);
-    const endDateDate = new Date(end);
-
-    console.log(startDateDate)
-
-    console.log(cabinId);
-
-    const unAvailableNights = allBookings
-      ?.filter((booking) => booking.cabinId === Number(cabinId))
-      .map((booking) => ({
-        startDate: booking.startDate,
-        endDate: booking.endDate,
-      }));
-
-    console.log(unAvailableNights);
-
-    for (let booking of unAvailableNights) {
-      console.log(booking);
-
-      if (
-        areIntervalsOverlapping(
-          {
-            start: new Date(booking.startDate),
-            end: new Date(booking.endDate),
-          },
-          {
-            start: startDateDate,
-            end: endDateDate,
-          }
-        )
-      ) {
-        setError(
-          "bookingDates",
-          {
-            type: "manual",
-            message:
-              "The cabin selected is unavailable for the selected dates. Please choose another cabin or other dates",
-          },
-          {
-            shouldFocus: true,
-          }
-        );
-        return;
-      }
-    }
+    // 1. Convert the dates string into date objects
+    const startDateDate = new Date(startDate);
+    const endDateDate = new Date(endDate);
 
     // 2. Convert the hasBreakfast and isPaid values into boolean values as they come as a string from the form
     const hasBreakfastBoolean = hasBreakfast === "true";
@@ -135,7 +77,7 @@ function CreateBookingForm({ onCloseModal }) {
       differenceInDays(endDateDate, startDateDate) > settings.maxBookingLength
     ) {
       setError(
-        "bookingDates",
+        "endDate",
         {
           type: "manual",
           message: `The number of nights should be between ${settings.minBookingLength} and ${settings.maxBookingLength}`,
@@ -149,6 +91,11 @@ function CreateBookingForm({ onCloseModal }) {
 
     // 4. If the previous condition is successful  assign the difference in days between endDate and startDate to numNights variable.
     const numNights = differenceInDays(endDateDate, startDateDate);
+
+    // 5. Getting the cabin price by using the received cabinId from the form
+    const cabinPrice = cabins.find(
+      (cabin) => cabin.id === Number(cabinId)
+    ).regularPrice;
 
     // 6. Getting the extras price by using the form values to check if hasBreakfastBoolean is true or false
     const extrasPrice = hasBreakfastBoolean
@@ -192,7 +139,7 @@ function CreateBookingForm({ onCloseModal }) {
       cabinId: Number(cabinId),
       numGuests: Number(numGuests),
       numNights,
-      cabinPrice: cabinPrice,
+      cabinPrice,
       extrasPrice,
       totalPrice,
       status,
@@ -210,12 +157,7 @@ function CreateBookingForm({ onCloseModal }) {
     });
   }
 
-  if (
-    isLoadingCabins ||
-    isLoadingSettings ||
-    isLoadingGuests ||
-    isLoadingAllBookings
-  )
+  if (isLoadingCabins || isLoadingSettings || isLoadingGuests)
     return <Spinner />;
 
   return (
@@ -240,38 +182,17 @@ function CreateBookingForm({ onCloseModal }) {
         <StyledSelect
           disabled={isCreatingBooking}
           id="cabinId"
-          defaultValue={cabins[0]}
+          defaultValue={cabins[0].name}
           {...register("cabinId", {
             required: "This field is required",
           })}
-          onChange={(e) =>
-            setValue(
-              "regularPrice",
-              `${formatCurrency(
-                cabins.find((cabin) => cabin.id === Number(e.target.value))
-                  .regularPrice
-              )}/night`
-            )
-          }
         >
           {cabins?.map((cabin) => (
             <option key={cabin.id} value={cabin.id}>
-              {cabin.name} - ({cabin.maxCapacity} guests)
+              {cabin.name} ({formatCurrency(cabin.regularPrice)}/night)
             </option>
           ))}
         </StyledSelect>
-      </FormRow>
-
-      <FormRow label="Cabin price" error={errors.regularPrice?.message}>
-        <Input
-          type="text"
-          id="regularPrice"
-          readOnly={true}
-          defaultValue={`${formatCurrency(cabins[0].regularPrice)}/night`}
-          {...register("regularPrice", {
-            required: "This field is required",
-          })}
-        />
       </FormRow>
 
       <FormRow label="Number of guests" error={errors?.numGuests?.message}>
@@ -294,39 +215,32 @@ function CreateBookingForm({ onCloseModal }) {
         />
       </FormRow>
 
-      <Controller
-        control={control}
-        name="bookingDates"
-        rules={{ required: "This field is required" }}
-        render={({ field: { onChange } }) => (
-          <FormRow label="Booking Dates" error={errors?.bookingDates?.message}>
-            <DatePicker
-              inputClass="date-picker"
-              className="custom-calendar"
-              // animations={[opacity(), transition({ from: 35, duration: 800 })]}
-              format="MMMM-DD-YYYY"
-              range={true}
-              rangeHover={true}
-              weekStartDayIndex={1}
-              numberOfMonths={2}
-              startDate={startDate}
-              endDate={endDate}
-              minDate={new Date()}
-              maxDate={addDays(new Date(), settings.maxBookingLength)}
-              showOtherDays={false}
-              id="bookingDates"
-              onChange={(e) => {
-                if (e === null) onChange("");
-                if (e?.length === 2) {
-                  console.log(e);
-                  setDateRange(e);
-                  onChange(e);
-                }
-              }}
-            />
-          </FormRow>
-        )}
-      />
+      <FormRow label="Start Date" error={errors?.startDate?.message}>
+        <Input
+          disabled={isCreatingBooking}
+          type="date"
+          id="startDate"
+          min={format(startDate, "yyyy-MM-dd")}
+          onChange={(e) => format(setStartDate(e.target.value), "yyyy-MM-dd")}
+          {...register("startDate", {
+            required: "This field is required",
+            value: format(startDate, "yyyy-MM-dd"),
+          })}
+        />
+      </FormRow>
+
+      <FormRow label="End Date" error={errors?.endDate?.message}>
+        <Input
+          disabled={isCreatingBooking}
+          type="date"
+          id="endDate"
+          min={format(endDate, "yyyy-MM-dd")}
+          onChange={(e) => format(setEndDate(e.target.value), "yyyy-MM-dd")}
+          {...register("endDate", {
+            required: "This field is required",
+          })}
+        />
+      </FormRow>
 
       <FormRow label="Add breakfast" error={errors?.hasBreakfast?.message}>
         <StyledSelect
@@ -335,7 +249,7 @@ function CreateBookingForm({ onCloseModal }) {
           defaultValue={false}
           {...register("hasBreakfast")}
         >
-          <option value={true}>Yes ({formatCurrency(settings.breakfastPrice)}/guest)</option>
+          <option value={true}>Yes</option>
           <option value={false}>No</option>
         </StyledSelect>
       </FormRow>
