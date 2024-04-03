@@ -306,8 +306,8 @@ function CreateBookingForm({ onCloseModal }) {
             <DatePicker
               inputClass="date-picker"
               className="custom-calendar"
-              // animations={[opacity(), transition({ from: 35, duration: 800 })]}
-              format="MMMM-DD-YYYY"
+              format="MMMM DD, YYYY"
+              // dateSeparator=" to "
               range={true}
               rangeHover={true}
               weekStartDayIndex={1}
