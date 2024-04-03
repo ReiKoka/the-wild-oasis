@@ -15,7 +15,7 @@ import Checkbox from "./../../ui/Checkbox";
 import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useSettings } from "../settings/useSettings";
-import { isPast, isToday, isTomorrow } from "date-fns";
+import { isToday, isTomorrow } from "date-fns";
 
 const Box = styled.div`
   /* Box */
@@ -52,9 +52,11 @@ function CheckinBooking() {
 
   const isCheckinAvailable =
     isTomorrow(new Date(startDate)) || isToday(new Date(startDate));
-  console.log(isCheckinAvailable);
+  // console.log(isCheckinAvailable);
 
-  console.log(isCheckinAvailable ? !confirmPaid || isCheckingIn : false);
+  // console.log(confirmPaid)
+
+  // console.log(isCheckinAvailable ? confirmPaid || isCheckingIn : false);
 
   const optionalBreakfastPrice =
     settings.breakfastPrice * numNights * numGuests;
@@ -115,7 +117,7 @@ function CheckinBooking() {
       </Box>
 
       <ButtonGroup>
-        {!isPast(new Date(startDate)) && (
+        {(isToday(startDate) || isTomorrow(startDate)) && (
           <Button
             onClick={handleCheckin}
             disabled={isCheckinAvailable ? !confirmPaid || isCheckingIn : true}
