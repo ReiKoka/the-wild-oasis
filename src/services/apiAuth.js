@@ -1,3 +1,4 @@
+import { isFileImage } from "../utils/helpers";
 import supabase, { supabaseUrl } from "./supabase";
 import random from "random-string-generator";
 
@@ -10,7 +11,9 @@ export async function signup({ fullName, email, password, avatar }) {
     options: {
       data: {
         fullName,
-        avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
+        avatar: isFileImage(avatar)
+          ? `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`
+          : "",
       },
     },
   });

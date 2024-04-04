@@ -6,6 +6,7 @@ import Input from "../../ui/Input";
 import { useSignup } from "./useSignup";
 import FileInput from "../../ui/FileInput";
 
+
 function SignupForm() {
   const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
