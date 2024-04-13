@@ -171,7 +171,7 @@ function BookingDataBox({ booking }) {
         </DataItem>
 
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {hasBreakfast ? `Yes (${settings.breakfastPrice}/guest)` : "No"}
+          {hasBreakfast ? `Yes (${settings?.breakfastPrice}/guest)` : "No"}
         </DataItem>
 
         <Price $isPaid={isPaid}>

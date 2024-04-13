@@ -20,6 +20,7 @@ import { formatDistanceFromNow } from "../../utils/helpers";
 import { useCheckout } from "../check-in-out/useCheckout";
 import { useDeleteBooking } from "./useDeleteBooking";
 import { useBookings } from "./useBookings";
+import { PAGE_SIZE } from "../../utils/constants";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -71,13 +72,19 @@ function BookingRow({
   const navigate = useNavigate();
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
-
   const [searchParams, setSearchParams] = useSearchParams();
 
+  
   const { count } = useBookings();
+  const pageCount = Math.ceil(count / PAGE_SIZE);
   const currentPage = !searchParams.get("page")
     ? 1
     : Number(searchParams.get("page"));
+
+  const resultFrom = (currentPage - 1) * PAGE_SIZE + 1;
+  const resultTo = currentPage === pageCount ? count : currentPage * PAGE_SIZE;
+  
+
 
   const currentStatus = searchParams?.get("status");
   const currentSortBy = searchParams?.get("sortBy");
@@ -116,7 +123,7 @@ function BookingRow({
               icon={<HiEye />}
               onClick={() => {
                 navigate(`/bookings/${bookingId}`, {
-                  state: { currentPage, currentStatus, currentSortBy, count },
+                  state: { currentPage, currentStatus, currentSortBy, count, resultFrom, resultTo },
                 });
               }}
             >
@@ -166,7 +173,7 @@ function BookingRow({
               //    on the bookings URL but you don't have any page param it would result in a bug where the page would become
               //    0 and then it would also ruin the page count on the table footer.
 
-              if (Number(count.toString().split("").slice(-1).join("")) === 1) {
+              if (resultFrom === resultTo) {
                 if (
                   Number(count.toString().split("").slice(0, -1).join("")) > 0
                 ) {

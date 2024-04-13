@@ -40,7 +40,7 @@ function BookingDetail() {
   const { status, id: bookingId } = booking;
 
   const statusToTagName = {
-    "unconfirmed": "blue",
+    unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };
@@ -85,11 +85,7 @@ function BookingDetail() {
               onConfirm={() => {
                 deleteBooking(bookingId, {
                   onSettled: () => {
-                    if (
-                      Number(
-                        state.count.toString().split("").slice(-1).join("")
-                      ) === 1
-                    ) {
+                    if (state.resultFrom === state.resultTo) {
                       navigate(
                         `/bookings/?${Number(state.count.toString().split("").slice(0, -1).join("")) > 0 ? `page=${state.currentPage === 1 ? 1 : state.currentPage - 1}` : ""}${state.currentStatus === null ? "" : "&status=" + state.currentStatus}${state.currentSortBy === null ? "" : "&sortBy=" + state.currentSortBy}`
                       );
