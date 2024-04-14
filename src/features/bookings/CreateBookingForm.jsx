@@ -247,15 +247,20 @@ function CreateBookingForm({ onCloseModal }) {
           {...register("cabinId", {
             required: "This field is required",
           })}
-          onChange={(e) =>
+          onChange={(e) => {
             setValue(
               "regularPrice",
               `${formatCurrency(
                 cabins.find((cabin) => cabin.id === Number(e.target.value))
                   .regularPrice
               )}/night`
-            )
-          }
+            );
+            setValue(
+              "numGuests",
+              cabins.find((cabin) => cabin.id === Number(e.target.value))
+                .maxCapacity
+            );
+          }}
         >
           {cabins?.map((cabin) => (
             <option key={cabin.id} value={cabin.id}>
@@ -281,7 +286,7 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type="number"
           id="numGuests"
-          defaultValue={1}
+          defaultValue={cabins[0].maxCapacity}
           disabled={isCreatingBooking}
           {...register("numGuests", {
             required: "This field is required",
