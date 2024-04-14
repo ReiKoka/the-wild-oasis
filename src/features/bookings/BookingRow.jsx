@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import styled from "styled-components";
 import { format, isToday } from "date-fns";
 import {
@@ -52,11 +51,9 @@ const Amount = styled.div`
 function BookingRow({
   booking: {
     id: bookingId,
-    created_at,
     startDate,
     endDate,
     numNights,
-    numGuests,
     totalPrice,
     status,
     guests: { fullName: guestName, email },
@@ -74,7 +71,6 @@ function BookingRow({
   const { deleteBooking, isDeleting } = useDeleteBooking();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  
   const { count } = useBookings();
   const pageCount = Math.ceil(count / PAGE_SIZE);
   const currentPage = !searchParams.get("page")
@@ -83,8 +79,6 @@ function BookingRow({
 
   const resultFrom = (currentPage - 1) * PAGE_SIZE + 1;
   const resultTo = currentPage === pageCount ? count : currentPage * PAGE_SIZE;
-  
-
 
   const currentStatus = searchParams?.get("status");
   const currentSortBy = searchParams?.get("sortBy");
@@ -123,7 +117,14 @@ function BookingRow({
               icon={<HiEye />}
               onClick={() => {
                 navigate(`/bookings/${bookingId}`, {
-                  state: { currentPage, currentStatus, currentSortBy, count, resultFrom, resultTo },
+                  state: {
+                    currentPage,
+                    currentStatus,
+                    currentSortBy,
+                    count,
+                    resultFrom,
+                    resultTo,
+                  },
                 });
               }}
             >
@@ -161,18 +162,6 @@ function BookingRow({
             disabled={isDeleting}
             onConfirm={() => {
               deleteBooking(bookingId);
-
-              // 1. The first if condition here is to take from the count of the bookings the last number.
-              //    Because you want to move to the previous page only if the last number of the count is 1.
-              //    So for example, if you have 22 bookings, when you delete a booking the number of the count
-              //    will be 21 so it will stay on page 3 but as soon as you delete the 21st booking this if block
-              //    will check if the last digit of the number is equal to 1.
-              // 2. The 2nd if block basically checks when the count is 0 so that then it removes the page param from
-              //    the URL. There is also a ternary operator to check if the currentPage === 1 this is because, if you
-              //    just delete some items from page number 1 while still having large number of bookings, or if you are
-              //    on the bookings URL but you don't have any page param it would result in a bug where the page would become
-              //    0 and then it would also ruin the page count on the table footer.
-
               if (resultFrom === resultTo) {
                 if (
                   Number(count.toString().split("").slice(0, -1).join("")) > 0
