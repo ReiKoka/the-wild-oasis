@@ -19,10 +19,9 @@ const Input = styled.input`
 `;
 
 function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@demo.com");
+  const [password, setPassword] = useState("demo1234");
   const { login, isLoading } = useLogin();
-  
 
   function handleSubmit(e) {
     e.preventDefault();
