@@ -312,7 +312,7 @@ function CreateBookingForm({ onCloseModal }) {
               inputClass="date-picker"
               className="custom-calendar"
               format="MMMM DD, YYYY"
-              // dateSeparator=" to "
+              dateSeparator=" to "
               range={true}
               rangeHover={true}
               weekStartDayIndex={1}
@@ -320,7 +320,6 @@ function CreateBookingForm({ onCloseModal }) {
               startDate={startDate}
               endDate={endDate}
               minDate={new Date()}
-              maxDate={addDays(new Date(), settings.maxBookingLength)}
               showOtherDays={false}
               id="bookingDates"
               onChange={(e) => {
